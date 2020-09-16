@@ -3,20 +3,15 @@
 // See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Don_tSleep
 {
     public partial class MainForm : Form
     {
+        private Timer myTimer;
+
         public MainForm()
         {
             InitializeComponent();
@@ -24,37 +19,16 @@ namespace Don_tSleep
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            // auto start
             AutoStart();
-
-            // operation
-            var operation = string.Empty;
-            if (PreventScreenSaver.Checked) operation = "PreventScreenSaver";
-            else if (PreventSleep.Checked) operation = "PreventSleep";
-            else if (PreventScreenSaverAndSleep.Checked) operation = "PreventScreenSaverAndSleep";
-            else if (AllowScreenSaverAndSleep.Checked) operation = "AllowScreenSaverAndSleep";
-
-            SelectOperation(operation);
+            CreateTimer();
+            SetOperation();
 
             this.WindowState = FormWindowState.Minimized;
             this.ShowInTaskbar = false;
         }
 
-        private void checkBoxAutoStart_CheckedChanged(object sender, EventArgs e)
-        {
-            AutoStart();
-        }
+        #region Auto Start
 
-        private void PowerSaver_CheckedChanged(object sender, EventArgs e)
-        {
-            var selectedRadioButton = (sender as RadioButton);
-
-            if (selectedRadioButton.Checked == true)
-            {
-                SelectOperation(selectedRadioButton.Name);
-            }
-        }
-        
         private void AutoStart()
         {
             if (checkBoxAutoStart.Checked)
@@ -70,26 +44,14 @@ namespace Don_tSleep
             }
         }
 
-        private void SelectOperation(string operation)
+        private void checkBoxAutoStart_CheckedChanged(object sender, EventArgs e)
         {
-            switch (operation)
-            {
-                case "PreventScreenSaver":
-                    NativeMethods.PreventScreenSaver();
-                    break;
-                case "PreventSleep":
-                    NativeMethods.PreventSleep();
-                    break;
-                case "PreventScreenSaverAndSleep":
-                    NativeMethods.PreventScreenSaverAndSleep();
-                    break;
-                case "AllowScreenSaverAndSleep":
-                    NativeMethods.AllowScreenSaverAndSleep();
-                    break;
-                default:
-                    break;
-            }
+            AutoStart();
         }
+
+        #endregion Auto Start
+
+        #region Tray Icon
 
         private void MainForm_Resize(object sender, EventArgs e)
         {
@@ -116,5 +78,93 @@ namespace Don_tSleep
             notifyIcon.Visible = false;
             notifyIcon.Dispose();
         }
+
+        #endregion Tray Icon
+
+        #region Operation
+
+        private void SetOperation()
+        {
+            var operation = string.Empty;
+            if (PreventScreenSaver.Checked) operation = "PreventScreenSaver";
+            else if (PreventSleep.Checked) operation = "PreventSleep";
+            else if (PreventScreenSaverAndSleep.Checked) operation = "PreventScreenSaverAndSleep";
+            else if (AllowScreenSaverAndSleep.Checked) operation = "AllowScreenSaverAndSleep";
+
+            SelectOperation(operation);
+        }
+
+        private void PowerSaver_CheckedChanged(object sender, EventArgs e)
+        {
+            var selectedRadioButton = (sender as RadioButton);
+
+            if (selectedRadioButton.Checked == true)
+            {
+                SelectOperation(selectedRadioButton.Name);
+            }
+        }
+
+        private void SelectOperation(string operation)
+        {
+            checkBoxMoveMouse.Enabled = true;
+            switch (operation)
+            {
+                case "PreventScreenSaver":
+                    NativeMethods.PreventScreenSaver();
+                    break;
+
+                case "PreventSleep":
+                    NativeMethods.PreventSleep();
+                    break;
+
+                case "PreventScreenSaverAndSleep":
+                    NativeMethods.PreventScreenSaverAndSleep();
+                    break;
+
+                case "AllowScreenSaverAndSleep":
+                    NativeMethods.AllowScreenSaverAndSleep();
+                    checkBoxMoveMouse.Enabled = false;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        #endregion Operation
+
+        #region Move Mouse Automatically
+
+        private void CreateTimer()
+        {
+            myTimer = new Timer();
+            myTimer.Enabled = false;
+            myTimer.Interval = 5000;
+            myTimer.Tick += Timer_Tick;
+        }
+
+        private void checkBoxMoveMouse_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxMoveMouse.Checked)
+            {
+                if (!myTimer.Enabled)
+                    myTimer.Start();
+            }
+            else
+            {
+                if (myTimer.Enabled)
+                    myTimer.Stop();
+            }
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            NativeMethods.SetCursorPos(Cursor.Position.X + 10, Cursor.Position.Y);
+            NativeMethods.SetCursorPos(Cursor.Position.X - 10, Cursor.Position.Y);
+        }
+
+        #endregion Move Mouse Automatically
+
+        
     }
 }

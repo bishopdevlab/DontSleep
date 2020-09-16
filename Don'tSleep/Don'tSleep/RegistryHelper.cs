@@ -2,11 +2,8 @@
 // Licensed under the Apache license.
 // See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 
 namespace Don_tSleep

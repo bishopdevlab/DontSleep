@@ -1,9 +1,10 @@
 # Don't Sleep
 The Don't Sleep provides the ability to set the screen saver and sleep mode on a Windows desktop PC.
- * Block screensaver
- * Block sleep/hibernate mode
- * Block screensaver and sleep/hibernate mode
+ * Block Screensaver
+ * Block Sleep/Hibernate mode
+ * Block Screensaver and Sleep/Hibernate mode
  * Unblock
+ * In addition, it provides a function to automatically move the mouse. Move the cursor to the side and then move it back to its original position.
 
-![Screenshot of Don't Sleep](/assets/images/README/README_2020-02-16-00-57-23.png)
+![Screenshot of Don't Sleep](/assets/images/README/README_2020-09-16-22-36-00.png)
  
