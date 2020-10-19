@@ -164,7 +164,5 @@ namespace Don_tSleep
         }
 
         #endregion Move Mouse Automatically
-
-        
     }
 }
